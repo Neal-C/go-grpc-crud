@@ -6,3 +6,48 @@ import "google/protobuf/timestamp.proto";
 package quote;
 
 option go_package = "./protocodegen";
+
+service QuoteApi {
+    rpc Create(QuoteRequest) returns (Quote);
+    rpc Read(QuoteFilter) returns (QuoteList);
+    rpc ReadOne(QuoteID) returns (Quote);
+    rpc Update(QuoteUpdateRequest) returns (Quote);
+    rpc Delete(QuoteID) returns (google.protobuf.Empty);
+}
+
+message Quote {
+    string id = 1;
+    string book = 2;
+    string quote = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+}
+
+message QuoteRequest {
+    string id = 1;
+    string book = 2;
+    string quote = 3;
+}
+message QuoteUpdateRequest {
+    string id = 1;
+    string book = 2;
+    string quote = 3;
+}
+
+message QuoteList {
+    repeated Quote quotes = 1;
+}
+
+// optional fields are behind an experimental flag 
+// --experimental_allow_proto3_optional
+// message QuotePartialUpdateRequest {
+//     string id = 1;
+//     optional string book = 2;
+//     optional string quote = 3;
+// }
+
+message QuoteFilter {}
+
+message QuoteID {
+    string id = 1;
+}
