@@ -13,12 +13,12 @@ import (
 )
 
 func Connect(ctx context.Context) (*pgxpool.Pool, error) {
-	dbURL, exists := os.LookupEnv("DATABASE_URL")
+	databaseURL, exists := os.LookupEnv("DATABASE_URL")
 	if !exists {
 		return nil, errors.New("DATABASE_URL not set")
 	}
 
-	pool, err := pgxpool.New(ctx, dbURL)
+	pool, err := pgxpool.New(ctx, databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
@@ -30,7 +30,7 @@ func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 
 	source := fmt.Sprintf("file://%s", migrationsPath)
 
-	m, err := migrate.New(source, dbURL)
+	m, err := migrate.New(source, databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create migrations: %w", err)
 	}

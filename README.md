@@ -31,6 +31,7 @@ to gain time, and give a minimum viable product, I overlooked several things:
 go get -u github.com/jackc/pgx/v5
 go get -u github.com/google/uuid
 go get -u github.com/stretchr/testify/require
+go get -u github.com/golang-migrate/migrate/v4
 ```
 
 - gRPC
