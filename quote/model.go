@@ -6,7 +6,7 @@ import (
 )
 
 type Quote struct {
-	Id         uuid.UUID `json:"id,omitempty" db:"id"`
+	ID         uuid.UUID `json:"id,omitempty" db:"id"`
 	Book       string    `json:"book,omitempty" db:"book"`
 	Quote      string    `json:"quote,omitempty" db:"quote"`
 	CreatedAt  time.Time `json:"insertedAt,omitempty" db:"created_at"`
