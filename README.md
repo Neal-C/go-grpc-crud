@@ -6,6 +6,10 @@
 
 Every design and tech decision were taken based in order of importance by: what I want to experiment/discover, what I like, what's been recommended to me by the Go community
 
+## Notes
+
+There's better way to write this API, specified in the uncommited Personal.md file mentioned in the .gitignore
+
 ### Choices
 
 to gain time, and give a minimum viable product, I overlooked several things:
