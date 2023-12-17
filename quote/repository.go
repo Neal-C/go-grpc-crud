@@ -69,7 +69,7 @@ func (self *QuoteRepository) FindByID(ctx context.Context, id string) (Quote, er
 
 }
 
-func (self *QuoteRepository) Update(ctx context.Context, quote Quote)  error {
+func (self *QuoteRepository) Update(ctx context.Context, quote Quote) error {
 	res, err := self.postgreSQLPool.Exec(ctx, "UPDATE quote SET (book, quote) = ($2 , $3) WHERE id = $1 ", quote.ID, quote.Book, quote.Quote)
 
 	if err != nil {
@@ -78,9 +78,23 @@ func (self *QuoteRepository) Update(ctx context.Context, quote Quote)  error {
 	}
 
 	if res.RowsAffected() == 0 {
-		return ErrNotFound;
+		return ErrNotFound
 	}
 
+	return nil
+}
+
+func (self *QuoteRepository) DeleteByID(ctx context.Context, id string) error {
+	res, err := self.postgreSQLPool.Exec(ctx, "DELETE FROM quote WHERE id = $1", id)
+
+	if err != nil {
+		log.Println("Failed to delete the quote: %w", err)
+		return fmt.Errorf("Failed to update the quote")
+	}
+
+	if res.RowsAffected() == 0 {
+		return ErrNotFound
+	}
 
 	return nil
 }
