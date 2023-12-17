@@ -2,12 +2,15 @@ package quote
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+var ErrNotFound = errors.New("stuff not found")
 
 type QuoteRepository struct {
 	postgreSQLPool *pgxpool.Pool
@@ -64,4 +67,20 @@ func (self *QuoteRepository) FindByID(ctx context.Context, id string) (Quote, er
 
 	return response, nil
 
+}
+
+func (self *QuoteRepository) Update(ctx context.Context, quote Quote)  error {
+	res, err := self.postgreSQLPool.Exec(ctx, "UPDATE quote SET (book, quote) = ($2 , $3) WHERE id = $1 ", quote.ID, quote.Book, quote.Quote)
+
+	if err != nil {
+		log.Println("Failed to update the quote: %w", err)
+		return fmt.Errorf("Failed to update the quote")
+	}
+
+	if res.RowsAffected() == 0 {
+		return ErrNotFound;
+	}
+
+
+	return nil
 }
