@@ -1,4 +1,4 @@
-//lint:file-ignore ST1006
+//lint:file-ignore ST1006 because
 package quote
 
 import (
@@ -27,7 +27,7 @@ func NewServer(quoteRepository *QuoteRepository) *Server {
 	}
 }
 
-func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteRequest) (*protocodegen.Quote, error) {
+func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteRequest)(*protocodegen.Quote, error) {
 	if request.Id == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "id cannot be empty")
 	}
@@ -65,7 +65,7 @@ func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteReque
 	return &grpcQuote, nil
 }
 
-func (self *Server) Read(ctx context.Context, _ *protocodegen.QuoteRequest) (*protocodegen.QuoteList, error) {
+func (self *Server) Read(ctx context.Context, _ *protocodegen.QuoteFilter) (*protocodegen.QuoteList, error) {
 	quotes, err := self.quoteRepository.FindAll(ctx)
 
 	if err != nil {
@@ -100,7 +100,7 @@ func (self *Server) ReadOne(ctx context.Context, request *protocodegen.QuoteID) 
 	return &response, nil
 }
 
-func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteRequest) (*protocodegen.Quote, error) {
+func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteUpdateRequest) (*protocodegen.Quote, error) {
 	quote, err := self.quoteRepository.FindByID(ctx, request.Id)
 
 	if err != nil {

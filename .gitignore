@@ -1,3 +1,5 @@
 Personal.md
 docker-compose.yaml
 .idea
+.dockerignore
+.env
