@@ -115,8 +115,15 @@ func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteReque
 	err = self.quoteRepository.Update(ctx, quote)
 
 	if errors.Is(err, ErrNotFound) {
+
 		log.Println("Failed to update quote", "error: %w", err)
+
 		return nil, status.Errorf(codes.NotFound, "failed to update quote")
+	} else if err != nil {
+
+		log.Println("Failed to update quote", "error: %w", err)
+
+		return nil, status.Errorf(codes.Internal, "failed to update quote")
 	}
 
 	response := QuoteToGRPCQuote(quote)
