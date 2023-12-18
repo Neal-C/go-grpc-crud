@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/golang/protobuf/ptypes/empty"
 	"log"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Server struct {
@@ -30,14 +32,14 @@ func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteReque
 		return nil, status.Errorf(codes.InvalidArgument, "id cannot be empty")
 	}
 
-	if request.Book == ""{
-		return nil, status.Errorf(codes.InvalidArgument,"book cannot be empty" )
+	if request.Book == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "book cannot be empty")
 	}
-	if request.Quote == ""{
-		return nil, status.Errorf(codes.InvalidArgument,"quote cannot be empty" )
+	if request.Quote == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "quote cannot be empty")
 	}
 
-	quoteID, err := uuid.Parse(request.Id);
+	quoteID, err := uuid.Parse(request.Id)
 
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "id isn't valid UUID")
@@ -46,9 +48,9 @@ func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteReque
 	now := time.Now()
 
 	quote := Quote{
-		ID: quoteID,
-		Book: request.Book,
-		Quote: request.Quote,
+		ID:        quoteID,
+		Book:      request.Book,
+		Quote:     request.Quote,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -58,12 +60,12 @@ func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteReque
 		return nil, fmt.Errorf("failed to insert quote")
 	}
 
-	grpcQuote := QuoteToGRPCQuote(quote) 
+	grpcQuote := QuoteToGRPCQuote(quote)
 
 	return &grpcQuote, nil
 }
 
-func (self *Server) Read(ctx context.Context, request *protocodegen.QuoteRequest)(*protocodegen.QuoteList, error){
+func (self *Server) Read(ctx context.Context, _ *protocodegen.QuoteRequest) (*protocodegen.QuoteList, error) {
 	quotes, err := self.quoteRepository.FindAll(ctx)
 
 	if err != nil {
@@ -84,7 +86,7 @@ func (self *Server) Read(ctx context.Context, request *protocodegen.QuoteRequest
 	}, nil
 }
 
-func (self *Server) ReadOne(ctx context.Context, request *protocodegen.QuoteID) (*protocodegen.Quote, error){
+func (self *Server) ReadOne(ctx context.Context, request *protocodegen.QuoteID) (*protocodegen.Quote, error) {
 
 	quote, err := self.quoteRepository.FindByID(ctx, request.Id)
 
@@ -98,7 +100,7 @@ func (self *Server) ReadOne(ctx context.Context, request *protocodegen.QuoteID) 
 	return &response, nil
 }
 
-func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteRequest)(*protocodegen.Quote, error){
+func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteRequest) (*protocodegen.Quote, error) {
 	quote, err := self.quoteRepository.FindByID(ctx, request.Id)
 
 	if err != nil {
@@ -112,7 +114,7 @@ func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteReque
 
 	err = self.quoteRepository.Update(ctx, quote)
 
-	if errors.Is(err, ErrNotFound){
+	if errors.Is(err, ErrNotFound) {
 		log.Println("Failed to update quote", "error: %w", err)
 		return nil, status.Errorf(codes.NotFound, "failed to update quote")
 	}
@@ -120,4 +122,15 @@ func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteReque
 	response := QuoteToGRPCQuote(quote)
 
 	return &response, nil
+}
+
+func (self *Server) Delete(ctx context.Context, request *protocodegen.QuoteID) (*emptypb.Empty, error) {
+	err := self.quoteRepository.DeleteByID(ctx, request.Id)
+
+	if err != nil {
+		log.Println("Failed to delete quote by ID", "error : %w", err)
+		return nil, fmt.Errorf("couldn't delete quote by ID")
+	}
+
+	return &empty.Empty{}, nil
 }
