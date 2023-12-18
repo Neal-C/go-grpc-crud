@@ -1,3 +1,4 @@
+//lint:file-ignore ST1006 
 package quote
 
 import (
@@ -23,7 +24,7 @@ func NewServer(quoteRepository *QuoteRepository) *Server {
 	}
 }
 
-func (self *Server) Create(ctx context.Context, request protocodegen.QuoteRequest) (*protocodegen.Quote, error) {
+func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteRequest) (*protocodegen.Quote, error) {
 	if request.Id == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "id cannot be empty")
 	}
@@ -59,4 +60,25 @@ func (self *Server) Create(ctx context.Context, request protocodegen.QuoteReques
 	grpcQuote := QuoteToGRPCQuote(quote) 
 
 	return &grpcQuote, nil
+}
+
+func (self *Server) Read(ctx context.Context, request *protocodegen.QuoteRequest)(*protocodegen.QuoteList, error){
+	quotes, err := self.quoteRepository.FindAll(ctx)
+
+	if err != nil {
+		log.Println("Failed to select all from quote", "error : %w", err)
+		return nil, fmt.Errorf("couldn't find all quotes")
+	}
+
+	response := make([]*protocodegen.Quote, len(quotes))
+
+	for index, item := range quotes {
+		quote := QuoteToGRPCQuote(item)
+
+		response[index] = &quote
+	}
+
+	return &protocodegen.QuoteList{
+		Quotes: response,
+	}, nil
 }
