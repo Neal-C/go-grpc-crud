@@ -1,3 +1,4 @@
+//lint:file-ignore ST1006 
 package main
 
 import (

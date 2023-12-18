@@ -1,8 +1,9 @@
-//lint:file-ignore ST1006 
+//lint:file-ignore ST1006
 package quote
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -90,6 +91,30 @@ func (self *Server) ReadOne(ctx context.Context, request *protocodegen.QuoteID) 
 	if err != nil {
 		log.Println("Failed to find quote by id ", "error: %w", err)
 		return nil, status.Errorf(codes.NotFound, "failed to find quote by id")
+	}
+
+	response := QuoteToGRPCQuote(quote)
+
+	return &response, nil
+}
+
+func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteRequest)(*protocodegen.Quote, error){
+	quote, err := self.quoteRepository.FindByID(ctx, request.Id)
+
+	if err != nil {
+		log.Println("Failed to find quote by id ", "error: %w", err)
+		return nil, status.Errorf(codes.NotFound, "failed to find quote by id")
+	}
+
+	quote.UpdatedAt = time.Now()
+	quote.Book = request.Book
+	quote.Quote = request.Quote
+
+	err = self.quoteRepository.Update(ctx, quote)
+
+	if errors.Is(err, ErrNotFound){
+		log.Println("Failed to update quote", "error: %w", err)
+		return nil, status.Errorf(codes.NotFound, "failed to update quote")
 	}
 
 	response := QuoteToGRPCQuote(quote)
