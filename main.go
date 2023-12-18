@@ -20,12 +20,21 @@ func main() {
 	}
 	defer listener.Close();
 
-	s := grpc.NewServer()
-	reflection.Register(s)
+	grpcServer := grpc.NewServer()
+	reflection.Register(grpcServer)
 
 	pool, err := database.Connect(context.Background())
 	if err != nil {
 		log.Fatalln("failed to connect to database:", err)
 	}
 	defer pool.Close();
+
+	quoteRepository := quote.NewQuoteRepository(pool)
+	quoteApiServer := quote.NewServer(quoteRepository)
+
+	protocodegen.RegisterQuoteApiServer(grpcServer,quoteApiServer)
+
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalln("Failed to serve grpcServer", err)
+	}
 }
