@@ -82,3 +82,17 @@ func (self *Server) Read(ctx context.Context, request *protocodegen.QuoteRequest
 		Quotes: response,
 	}, nil
 }
+
+func (self *Server) ReadOne(ctx context.Context, request *protocodegen.QuoteID) (*protocodegen.Quote, error){
+
+	quote, err := self.quoteRepository.FindByID(ctx, request.Id)
+
+	if err != nil {
+		log.Println("Failed to find quote by id ", "error: %w", err)
+		return nil, status.Errorf(codes.NotFound, "failed to find quote by id")
+	}
+
+	response := QuoteToGRPCQuote(quote)
+
+	return &response, nil
+}
