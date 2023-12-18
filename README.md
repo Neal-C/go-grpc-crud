@@ -15,6 +15,7 @@ There's better way to write this API, specified in the uncommited Personal.md fi
 to gain time, and give a minimum viable product, I overlooked several things:
 
 - database initialization
+- docker best practices
 - security (errors returned to the client, etc...)
 - proper typing 
 - error and exception handling
