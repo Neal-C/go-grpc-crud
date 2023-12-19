@@ -10,6 +10,8 @@ Every design and tech decision were taken based in order of importance by: what 
 
 There's better way to write this API, specified in the uncommited Personal.md file mentioned in the .gitignore
 
+Needs the Docker fix written in Personal.md
+
 ### Choices
 
 to gain time, and give a minimum viable product, I overlooked several things:
