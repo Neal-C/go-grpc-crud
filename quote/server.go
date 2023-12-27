@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/golang/protobuf/ptypes/empty"
 	"log"
 	"time"
 
@@ -139,5 +138,5 @@ func (self *Server) Delete(ctx context.Context, request *protocodegen.QuoteID) (
 		return nil, fmt.Errorf("couldn't delete quote by ID")
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
