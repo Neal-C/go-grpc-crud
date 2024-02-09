@@ -59,7 +59,7 @@ func (self *Server) Create(ctx context.Context, request *protocodegen.QuoteReque
 		return nil, fmt.Errorf("failed to insert quote")
 	}
 
-	grpcQuote := QuoteToGRPCQuote(quote)
+	grpcQuote := GRPCQuoteFromQuote(quote)
 
 	return &grpcQuote, nil
 }
@@ -75,7 +75,7 @@ func (self *Server) Read(ctx context.Context, _ *protocodegen.QuoteFilter) (*pro
 	response := make([]*protocodegen.Quote, len(quotes))
 
 	for index, item := range quotes {
-		quote := QuoteToGRPCQuote(item)
+		quote := GRPCQuoteFromQuote(item)
 
 		response[index] = &quote
 	}
@@ -94,7 +94,7 @@ func (self *Server) ReadOne(ctx context.Context, request *protocodegen.QuoteID) 
 		return nil, status.Errorf(codes.NotFound, "failed to find quote by id")
 	}
 
-	response := QuoteToGRPCQuote(quote)
+	response := GRPCQuoteFromQuote(quote)
 
 	return &response, nil
 }
@@ -125,7 +125,7 @@ func (self *Server) Update(ctx context.Context, request *protocodegen.QuoteUpdat
 		return nil, status.Errorf(codes.Internal, "failed to update quote")
 	}
 
-	response := QuoteToGRPCQuote(quote)
+	response := GRPCQuoteFromQuote(quote)
 
 	return &response, nil
 }

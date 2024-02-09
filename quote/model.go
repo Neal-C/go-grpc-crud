@@ -16,7 +16,7 @@ type Quote struct {
 	UpdatedAt  time.Time `json:"updatedAt,omitempty" db:"updated_at"`
 }
 
-func QuoteToGRPCQuote(quote Quote) protocodegen.Quote {
+func GRPCQuoteFromQuote(quote Quote) protocodegen.Quote {
 	return protocodegen.Quote{
 		// investigate this
 		Id: quote.ID.URN(),
